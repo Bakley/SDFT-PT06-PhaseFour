@@ -1,7 +1,8 @@
 from flask_restful import Resource, reqparse
 from flask import jsonify
-from models import db, Candidate
+from models.candidate import Candidate
 from sqlalchemy.exc import SQLAlchemyError
+from extension import db
 
 class CandidateResource(Resource):
     # Parser for handling POST and PUT requests
@@ -17,7 +18,7 @@ class CandidateResource(Resource):
         if candidate is None:
             return {'message': 'Candidate not found'}, 404
 
-        return jsonify(candidate.to_dict())
+        return candidate.to_dict(), 200
 
     def post(self):
         # Create a new candidate
@@ -37,7 +38,7 @@ class CandidateResource(Resource):
             db.session.rollback()
             return {'message': 'Error creating candidate', 'error': str(e)}, 500
 
-        return jsonify(candidate.to_dict()), 201
+        return candidate.to_dict(), 201
 
     def put(self, candidate_id):
         """

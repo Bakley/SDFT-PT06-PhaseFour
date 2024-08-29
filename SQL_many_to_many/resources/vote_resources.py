@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from models.voter_candidate import voter_candidate
+from models.voter_candidate import VoterCandidate
 from models.candidate import Candidate
 from utils import cal_app, find_winner
 from extension import db
@@ -8,7 +8,7 @@ from extension import db
 class VoteResource(Resource):
     def post(self):
         data =  request.get_json()
-        vote = voter_candidate.insert().values(**data)
+        vote = VoterCandidate(**data)
 
         db.session.execute(vote)
         db.session.commit
@@ -17,7 +17,7 @@ class VoteResource(Resource):
         }, 201
 
     def get(self):
-        votes = db.session.query(voter_candidate).all()
+        votes = db.session.query(VoterCandidate).all()
         app_perc = cal_app(votes)
         winner_id, max_app = find_winner(app_perc)
 

@@ -11,7 +11,12 @@ class BaseModel(db.Model):
 
     serialize_rules = ()
 
+    from datetime import datetime
+
     def to_dict(self):
-        return {
-            c.name: getattr(self, c.name) for c in self.__table__.columns if c.name not in self.serialize_rules
-            }
+        """Convert the model instance to a dictionary, converting datetime fields to strings."""
+        data = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        for key, value in data.items():
+            if isinstance(value, datetime):
+                data[key] = value.isoformat()  # Convert datetime to ISO format string
+        return data

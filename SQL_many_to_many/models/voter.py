@@ -1,6 +1,5 @@
 from .base_model import BaseModel, db
-
-from .voter_candidate import voter_candidate
+from .voter_candidate import VoterCandidate
 
 class Voter(BaseModel):
     __tablename__ = 'voter'
@@ -9,14 +8,13 @@ class Voter(BaseModel):
     gender = db.Column(db.String(10), nullable=False)
     location = db.Column(db.String(100), nullable=False)
 
-    votes = db.relationship("Candidate", 
-                            secondary=voter_candidate,
-                            backref=db.backref('voters', lazy=True)
+    voter_candidates = db.relationship("VoterCandidate",
+                            back_populates='voter'
             )
 
     serialize_rules = ('location',)
 
     def to_dict(self):
         res = super().to_dict()
-        res['total_votes'] = len(self.votes)
+        # res['total_votes'] = len(self.votes)
         return res
